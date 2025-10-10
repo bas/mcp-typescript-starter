@@ -1,9 +1,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
 import {
   ElicitRequest,
   ElicitResultSchema,
+  ServerRequest,
+  ServerNotification,
 } from "@modelcontextprotocol/sdk/types.js";
-import { z } from "zod";
 
 export function defineProgrammingSurvey() {
   return {
@@ -11,45 +13,33 @@ export function defineProgrammingSurvey() {
     description:
       "Demonstrates the Elicitation feature by asking the user to provide information about their programming background.",
     schema: {},
-    handler: async (_args: any, extra: any) => {
+    handler: async (_args: any, extra: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
       try {
-        // Helper function to request elicitation from the client
-        const requestElicitation = async (
-          message: string,
-          requestedSchema: any,
-          sendRequest: any
-        ) => {
-          const request: ElicitRequest = {
-            method: "elicitation/create",
-            params: {
-              message,
-              requestedSchema,
+        // Request elicitation from the client
+        const request: ElicitRequest = {
+          method: "elicitation/create",
+          params: {
+            message: "Please tell us about your programming background!",
+            requestedSchema: {
+              type: "object",
+              properties: {
+                programmingLanguage: {
+                  type: "string",
+                  enum: ["TypeScript", "JavaScript", "Python", "Java", "Go"],
+                  description: "Your preferred programming language",
+                },
+                experienceLevel: {
+                  type: "string",
+                  enum: ["Beginner", "Intermediate", "Advanced", "Expert"],
+                  description: "Your programming experience level",
+                },
+              },
+              required: ["programmingLanguage", "experienceLevel"],
             },
-          };
-
-          return await sendRequest(request, ElicitResultSchema);
+          },
         };
 
-        const elicitationResult = await requestElicitation(
-          "Please tell us about your programming background!",
-          {
-            type: "object",
-            properties: {
-              programmingLanguage: {
-                type: "string",
-                enum: ["TypeScript", "JavaScript", "Python", "Java", "Go"],
-                description: "Your preferred programming language",
-              },
-              experienceLevel: {
-                type: "string",
-                enum: ["Beginner", "Intermediate", "Advanced", "Expert"],
-                description: "Your programming experience level",
-              },
-            },
-            required: ["programmingLanguage", "experienceLevel"],
-          },
-          extra.sendRequest
-        );
+        const elicitationResult = await extra.sendRequest(request, ElicitResultSchema);
 
         const content = [];
 
@@ -62,8 +52,8 @@ export function defineProgrammingSurvey() {
             text: `✅ Thank you for sharing your preferences!`,
           });
 
-          const { programmingLanguage, experienceLevel } =
-            elicitationResult.content;
+          const userResponses = elicitationResult.content as Record<string, string>;
+          const { programmingLanguage, experienceLevel } = userResponses;
           content.push({
             type: "text" as const,
             text: `Here's your programming background:\n- Programming Language: ${
