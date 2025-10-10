@@ -72,12 +72,6 @@ export function defineProgrammingSurvey() {
           });
         }
 
-        // Include raw result for debugging
-        content.push({
-          type: "text" as const,
-          text: `\nRaw result: ${JSON.stringify(elicitationResult, null, 2)}`,
-        });
-
         return { content };
       } catch (error) {
         // Clean error handling - just report what happened
