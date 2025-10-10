@@ -3,6 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { registerHelloTool, registerGitHubZenTool } from "./tools.js";
 import { registerExampleResource } from "./resources.js";
 import { registerExamplePrompt } from "./prompts.js";
+import { registerProgrammingSurvey } from "./elicitations.js";
 
 export async function startServer({ greeting, secret }: { greeting: string; secret: string }) {
   const server = new McpServer({
@@ -15,6 +16,7 @@ export async function startServer({ greeting, secret }: { greeting: string; secr
   registerGitHubZenTool(server);
   registerExampleResource(server);
   registerExamplePrompt(server);
+  registerProgrammingSurvey(server);
 
   // Start stdio transport
   const transport = new StdioServerTransport();
