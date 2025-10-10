@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { registerHelloTool } from "./tools.js";
+import { registerHelloTool, registerGitHubZenTool } from "./tools.js";
 import { registerExampleResource } from "./resources.js";
 import { registerExamplePrompt } from "./prompts.js";
 
@@ -12,6 +12,7 @@ export async function startServer({ greeting, secret }: { greeting: string; secr
 
   // Register tool, resource, and prompt
   registerHelloTool(server, greeting);
+  registerGitHubZenTool(server);
   registerExampleResource(server);
   registerExamplePrompt(server);
 

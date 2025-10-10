@@ -32,6 +32,7 @@ npm start
 ### Tools
 
 - `hello`: Says hello to someone (uses MCP_GREETING)
+- `get_github_zen`: Get a Zen of GitHub quote from the GitHub API
 
 ### Resources
 

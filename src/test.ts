@@ -1,4 +1,4 @@
-const { defineHelloTool } = require('./lib/tools');
+const { defineHelloTool, defineGitHubZenTool } = require('./lib/tools');
 const { defineExampleResource } = require('./lib/resources');
 const { defineExamplePrompt } = require('./lib/prompts');
 
@@ -19,5 +19,13 @@ describe('MCP Server', () => {
     const promptDef = defineExamplePrompt();
     const result = promptDef.handler({ name: 'Alice' }, {});
     expect(result.messages[0].content.text).toContain('Alice');
+  });
+
+  it('github zen tool returns a quote', async () => {
+    const toolDef = defineGitHubZenTool();
+    const result = await toolDef.handler({}, {});
+    expect(result.content[0].text).toBeTruthy();
+    expect(typeof result.content[0].text).toBe('string');
+    expect(result.content[0].text.length).toBeGreaterThan(0);
   });
 });
